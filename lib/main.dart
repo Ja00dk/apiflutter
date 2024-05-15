@@ -3,10 +3,12 @@ import 'user.dart';
 import 'user_service.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,17 +17,19 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: UserListScreen(),
+      home: const UserListScreen(),
     );
   }
 }
 
 class UserListScreen extends StatefulWidget {
+  const UserListScreen({super.key});
+
   @override
-  _UserListScreenState createState() => _UserListScreenState();
+  UserListScreenState createState() => UserListScreenState();
 }
 
-class _UserListScreenState extends State<UserListScreen> {
+class UserListScreenState extends State<UserListScreen> {
   late Future<List<User>> futureUsers;
   final UserService userService = UserService();
 
@@ -46,7 +50,7 @@ class _UserListScreenState extends State<UserListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: const Text('User List'),
       ),
       body: Column(
         children: [
@@ -72,7 +76,7 @@ class _UserListScreenState extends State<UserListScreen> {
                 User user = snapshot.data![index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(user.picture!),
+                    backgroundImage: NetworkImage(user.picture),
                   ),
                   title: Text('${user.firstName} ${user.lastName}'),
                   subtitle: Text(user.email), // Changed to display email
@@ -81,7 +85,7 @@ class _UserListScreenState extends State<UserListScreen> {
               },
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -93,51 +97,51 @@ class _UserListScreenState extends State<UserListScreen> {
       spacing: 12,
       children: <Widget>[
         IconButton(
-          icon: Icon(Icons.edit),
+          icon: const Icon(Icons.edit),
           onPressed: () => _showEditDialog(user),
         ),
         IconButton(
-          icon: Icon(Icons.delete),
-          onPressed: () => _deleteUser(user.id!),
+          icon: const Icon(Icons.delete),
+          onPressed: () => _deleteUser(user.id),
         ),
       ],
     );
   }
 
   void _showEditDialog(User user) {
-    tituloController.text = user.title!;
+    tituloController.text = user.title;
     firstnameController.text = user.firstName;
     lastnameController.text = user.lastName;
     emailController.text =
         user.email; // Assuming email cannot be updated, disable this field
-    pictureController.text = user.picture!;
+    pictureController.text = user.picture;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Edit User"),
+        title: const Text("Edit User"),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextFormField(
                   controller: tituloController,
-                  decoration: InputDecoration(labelText: 'Title')),
+                  decoration: const InputDecoration(labelText: 'Title')),
               TextFormField(
                   controller: firstnameController,
-                  decoration: InputDecoration(labelText: 'First Name')),
+                  decoration: const InputDecoration(labelText: 'First Name')),
               TextFormField(
                   controller: lastnameController,
-                  decoration: InputDecoration(labelText: 'Last Name')),
+                  decoration: const InputDecoration(labelText: 'Last Name')),
               TextFormField(
                   controller: pictureController,
-                  decoration: InputDecoration(labelText: 'Picture URL')),
+                  decoration: const InputDecoration(labelText: 'Picture URL')),
             ],
           ),
         ),
         actions: <Widget>[
           TextButton(
-            child: Text("Update"),
+            child: const Text("Update"),
             onPressed: () {
               _updateUser(user);
               Navigator.of(context).pop();
@@ -161,7 +165,7 @@ class _UserListScreenState extends State<UserListScreen> {
         firstnameController.text.isNotEmpty &&
         lastnameController.text.isNotEmpty &&
         pictureController.text.isNotEmpty) {
-      userService.updateUser(user.id!, dataToUpdate).then((updatedUser) {
+      userService.updateUser(user.id, dataToUpdate).then((updatedUser) {
         _showSnackbar('User updated successfully!');
         _refreshUserList();
       }).catchError((error) {
@@ -181,21 +185,21 @@ class _UserListScreenState extends State<UserListScreen> {
 
   Widget _buildAddUserForm() {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         children: <Widget>[
           TextFormField(
               controller: firstnameController,
-              decoration: InputDecoration(labelText: 'First Name')),
+              decoration: const InputDecoration(labelText: 'First Name')),
           TextFormField(
               controller: lastnameController,
-              decoration: InputDecoration(labelText: 'Last Name')),
+              decoration: const InputDecoration(labelText: 'Last Name')),
           TextFormField(
               controller: emailController, // Added email input field
-              decoration: InputDecoration(labelText: 'Email')),
+              decoration: const InputDecoration(labelText: 'Email')),
           ElevatedButton(
             onPressed: _addUser,
-            child: Text('Add User'),
+            child: const Text('Add User'),
           ),
         ],
       ),
