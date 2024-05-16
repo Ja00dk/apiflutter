@@ -12,12 +12,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // Oculta o banner "debug"
-      debugShowCheckedModeBanner: false,
-      title: 'Meu Aplicativo de Usuários',      
+  
+      debugShowCheckedModeBanner: false, 
+      title: 'My App of Users',      
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
-        scaffoldBackgroundColor: Colors.white,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey),
+        scaffoldBackgroundColor: Color.fromARGB(255, 181, 184, 137),
       ),
       home: const UserListScreen(),
     );
@@ -35,7 +35,7 @@ class UserListScreenState extends State<UserListScreen> {
   late Future<List<User>> futureUsers;
   final UserService userService = UserService();
 
-  final TextEditingController tituloController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
   final TextEditingController firstnameController = TextEditingController();
   final TextEditingController lastnameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -53,7 +53,7 @@ class UserListScreenState extends State<UserListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Usuários'),
+        title: const Text('List of Users'),
       ),
       body: _addingUser ? _buildAddUserForm() : _buildUserList(),
       floatingActionButton: FloatingActionButton(
@@ -73,7 +73,7 @@ class UserListScreenState extends State<UserListScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
-            return Center(child: Text("Erro: ${snapshot.error}"));
+            return Center(child: Text("Error: ${snapshot.error}"));
           }
           return ListView.builder(
             itemCount: snapshot.data?.length ?? 0,
@@ -121,16 +121,16 @@ class UserListScreenState extends State<UserListScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Text(
-            'Adicionar Usuário',
+            'Add User',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           TextFormField(
             controller: firstnameController,
-            decoration: const InputDecoration(labelText: 'Nome'),
+            decoration: const InputDecoration(labelText: 'Name'),
           ),
           TextFormField(
             controller: lastnameController,
-            decoration: const InputDecoration(labelText: 'Sobrenome'),
+            decoration: const InputDecoration(labelText: 'Lastname'),
           ),
           TextFormField(
             controller: emailController,
@@ -138,7 +138,7 @@ class UserListScreenState extends State<UserListScreen> {
           ),
           TextFormField(
             controller: pictureController,
-            decoration: const InputDecoration(labelText: 'URL da Foto'),
+            decoration: const InputDecoration(labelText: 'URL Picture'),
           ),
           const SizedBox(height: 20),
           Row(
@@ -146,7 +146,7 @@ class UserListScreenState extends State<UserListScreen> {
             children: [
               ElevatedButton(
                 onPressed: _createUser,
-                child: const Text('Adicionar'),
+                child: const Text('Add'),
               ),
             ],
           ),
@@ -163,23 +163,23 @@ class UserListScreenState extends State<UserListScreen> {
       userService
           .createUser(User(
             id: '',
-            title: tituloController.text,
+            title: titleController.text,
             firstName: firstnameController.text,
             lastName: lastnameController.text,
             email: emailController.text,
             picture: pictureController.text,
           ))
           .then((newUser) {
-        _showSnackbar('Usuário adicionado com sucesso!');
+        _showSnackbar('User added successfully!');
         _refreshUserList();
         setState(() {
           _addingUser = false;
         });
       }).catchError((error) {
-        _showSnackbar('Falha ao adicionar usuário: $error');
+        _showSnackbar('Failed to add user: $error');
       });
     } else {
-      _showSnackbar('Por favor, preencha todos os campos.');
+      _showSnackbar('Please fill in all fields.');
     }
   }
 
@@ -195,7 +195,7 @@ class UserListScreenState extends State<UserListScreen> {
   }
 
   void _showEditDialog(User user) {
-    tituloController.text = user.title;
+    titleController.text = user.title;
     firstnameController.text = user.firstName;
     lastnameController.text = user.lastName;
     emailController.text = user.email;
@@ -204,22 +204,22 @@ class UserListScreenState extends State<UserListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Editar Usuário"),
+        title: const Text("Edit User"),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextFormField(
-                controller: tituloController,
-                decoration: const InputDecoration(labelText: 'Título'),
+                controller: titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
               ),
               TextFormField(
                 controller: firstnameController,
-                decoration: const InputDecoration(labelText: 'Nome'),
+                decoration: const InputDecoration(labelText: 'Name'),
               ),
               TextFormField(
                 controller: lastnameController,
-                decoration: const InputDecoration(labelText: 'Sobrenome'),
+                decoration: const InputDecoration(labelText: 'Lastname'),
               ),
               TextFormField(
                 controller: emailController,
@@ -228,14 +228,14 @@ class UserListScreenState extends State<UserListScreen> {
               TextFormField(
                 controller: pictureController,
                 decoration:
-                    const InputDecoration(labelText: 'URL da Foto'),
+                    const InputDecoration(labelText: 'URL Picture'),
               ),
             ],
           ),
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text("Atualizar"),
+            child: const Text("To update"),
             onPressed: () {
               _updateUser(user);
               Navigator.of(context).pop();
@@ -248,7 +248,7 @@ class UserListScreenState extends State<UserListScreen> {
 
   void _updateUser(User user) {
     Map<String, dynamic> dataToUpdate = {
-      'title': tituloController.text,
+      'title': titleController.text,
       'firstName': firstnameController.text,
       'lastName': lastnameController.text,
       'email': emailController.text,
@@ -260,22 +260,22 @@ class UserListScreenState extends State<UserListScreen> {
         emailController.text.isNotEmpty &&
         pictureController.text.isNotEmpty) {
       userService.updateUser(user.id, dataToUpdate).then((updatedUser) {
-        _showSnackbar('Usuário atualizado com sucesso!');
+        _showSnackbar('User updated successfully!');
         _refreshUserList();
       }).catchError((error) {
-        _showSnackbar('Falha ao atualizar usuário: $error');
+        _showSnackbar('Falled to update user: $error');
       });
     } else {
-      _showSnackbar('Por favor, preencha todos os campos.');
+      _showSnackbar('Please fill in all fields.');
     }
   }
 
   void _deleteUser(String id) {
     userService.deleteUser(id).then((_) {
-      _showSnackbar('Usuário excluído com sucesso!');
+      _showSnackbar('User deleted successfully!');
       _refreshUserList();
     }).catchError((error) {
-      _showSnackbar('Falha ao excluir usuário.');
+      _showSnackbar('Failed to delete user: $error.');
     });
   }
 }
