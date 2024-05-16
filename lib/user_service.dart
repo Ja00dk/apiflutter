@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'user.dart';
+import 'package:logger/logger.dart';
 
 class UserService {
   final String apiUrl = "https://dummyapi.io/data/v1";
@@ -20,6 +21,7 @@ class UserService {
       }),
       headers: headers,
     );
+    var logger = Logger();
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       if (jsonResponse is Map<String, dynamic> &&
@@ -30,9 +32,11 @@ class UserService {
             usersJson.map((dynamic item) => User.fromJson(item)).toList();
         return users;
       } else {
+        logger.i('Error ${response.statusCode}: ${response.body}');
         throw "Unexpected JSON format: ${response.body}";
       }
     } else {
+      logger.i('Error ${response.statusCode}: ${response.body}');
       throw "Failed to load users with status code: ${response.statusCode}";
     }
   }
@@ -43,9 +47,11 @@ class UserService {
       Uri.parse('$apiUrl/user/$id'),
       headers: headers,
     );
+    var logger = Logger();
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
+      logger.i('Error ${response.statusCode}: ${response.body}');
       throw "Failed to get user with status code: ${response.statusCode}";
     }
   }
@@ -61,6 +67,7 @@ class UserService {
         'email': user.email,
       }),
     );
+    var logger = Logger();
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       if (data != null && data.containsKey('id')) {
@@ -72,6 +79,7 @@ class UserService {
     } else if (response.statusCode == 201) {
       return User.fromJson(jsonDecode(response.body));
     } else {
+      logger.i('Error ${response.statusCode}: ${response.body}');
       throw "Failed to create user with status code: ${response.statusCode}";
     }
   }
@@ -83,11 +91,11 @@ class UserService {
       headers: headers,
       body: jsonEncode(dataToUpdate),
     );
-
+    var logger = Logger();
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
-      print('Error ${response.statusCode}: ${response.body}');
+      logger.i('Error ${response.statusCode}: ${response.body}');
       throw "Failed to update user with status code: ${response.statusCode}";
     }
   }
@@ -98,9 +106,11 @@ class UserService {
       Uri.parse('$apiUrl/user/$id'),
       headers: headers,
     );
+    var logger = Logger();
     if (response.statusCode == 200) {
       return id; // Assume que a resposta é o ID do usuário deletado
     } else {
+      logger.i('Error ${response.statusCode}: ${response.body}');
       throw "Failed to delete user with status code: ${response.statusCode}";
     }
   }
